@@ -25,9 +25,13 @@ b.	If no one can create a straight line with their own mark and all the position
 ### IMPLEMENTATION:
 The implementation workflow for this project will be as follows:
 
+![GitHub Logo](/Image/Python_flowchart.png)
+
 In order to visualize the defined game rules and description, the game is shown in Figures below.
 
 First the game will start with empty board.
+
+![GitHub Logo](/Image/Board.jpg)
 
 Then Player 1 will make his/her move by playing mark “X” on this board. Then Player 2 will make his/her move by playing mark “O” on this board. This will keep on continuing until the board is full of marks.
 
