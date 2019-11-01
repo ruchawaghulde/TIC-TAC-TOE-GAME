@@ -22,7 +22,7 @@ A player can choose between two symbols with his opponent, usual game uses “X�
 a.	One of the players gets three of his/her marks in a row (vertically, horizontally, or diagonally) i.e. that player wins the game.<br/>
 b.	If no one can create a straight line with their own mark and all the positions on the board are occupied, then the game ends in a  draw/tie.
 
-### IMPLEMENTATION:
+### IMPLEMENTATION PLAN:
 The implementation workflow for this project will be as follows:
 
 ![GitHub Logo](/Image/Python_flowchart.png)
@@ -42,6 +42,8 @@ Then the program will check if Player 1 with “X” wins or Player 2 with “O�
 ![GitHub Logo](/Image/PythonProj.png)
 
 If none of the players win, the program will check for draw.
+
+![GitHub Logo](/Image/ProposalPythonProj.png)
 
 All the above defined game rules and this implementation workflow will be taken into consideration while designing a Python program for this project.
 
