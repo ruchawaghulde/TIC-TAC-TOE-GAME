@@ -35,7 +35,7 @@ First the game will start with empty board.
 
 Then Player 1 will make his/her move by playing mark “X” on this board. Then Player 2 will make his/her move by playing mark “O” on this board. This will keep on continuing until the board is full of marks.
 
-<p align="center"><img src="Image/Python_gameplay.jpg" /></p>
+<p align="center"><img src="Image/Python_gameplay.jpg" width="350" height="230" /></p>
 
 Then the program will check if Player 1 with “X” wins or Player 2 with “O” wins and that scenario will be follows: (could be vertically, horizontally or diagonally)
 
