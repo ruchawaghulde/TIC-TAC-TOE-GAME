@@ -7,9 +7,7 @@ This project for EE-551 aims to develop a Tic Tac Toe game using python. It main
 In order to understand what Tic Tac Toe game is and how to play the game, below is the description.
 
 ### GAME DESCRIPTION:
-Tic Tac Toe is a two-player game (one of them being played by computer or human). In this game, there is a board with 3 x 3 squares as shown in this figure below.<br/>
-
-<p align="center"><img src="Images/Board.jpg" /></p>
+Tic Tac Toe is a two-player game (one of them being played by computer or human). In this game, there is a board with 3 x 3 squares.<br/>
 
 The two players take turns putting marks on a 3x3 board. The goal of Tic Tac Toe game is to be one of the players to get three same symbols in a row - horizontally, vertically or diagonally on a 3 x 3 grid.  The player who first gets 3 of his/her symbols (marks) in a row - vertically, horizontally, or diagonally wins the game, and the other loses the game. 
 The game can be played by two players. There are two options for players: (a) Human  (b) Computer
@@ -32,8 +30,6 @@ The implementation workflow for this project is as follows:
 In order to visualize the defined game rules and description, the game is shown in Figures below.
 
 First the game will start with empty board.
-
-<p align="center"><img src="Images/Board.jpg" /></p>
 
 Then Player 1 will make his/her move by playing mark “X” on this board. Then Player 2 will make his/her move by playing mark “O” on this board. This will keep on continuing until the board is full of marks.
 
@@ -106,8 +102,6 @@ Another important factor in this algorithm is depth.
 The key improvement to this algorithm, such that, no matter the board arrangement, the perfect player will play perfectly, is to take the "depth" or number of turns till the end of the game into account. Basically the perfect player should play perfectly, but prolong the game as much as possible.
 
 So each time we invoke minimax, depth is incremented by 1 and when the end game state is ultimately calculated, the score is adjusted by depth.
-
-Let's see how this looks in our move tree:
 
 This time the depth (Shown in black on the left) causes the score to differ for each end state, and because the level 0 part of minimax will try to maximize the available scores (because O is the turn taking player), the -6 score will be chosen as it is greater than the other states with a score of -8. 
 
