@@ -25,7 +25,7 @@ a.	One of the players gets three of his/her marks in a row (vertically, horizont
 b.	If no one can create a straight line with their own mark and all the positions on the board are occupied, then the game ends in a  draw/tie.
 
 ### IMPLEMENTATION PLAN:
-The implementation workflow for this project will be as follows:
+The implementation workflow for this project is as follows:
 
 <p align="center"><img src="Images/Python_flowchart.png" /></p>
 
@@ -47,7 +47,6 @@ If none of the players win, the program will check for draw.
 
 <p align="center"><img src="Images/ProposalPythonProj.png" /></p>
 
-All the above defined game rules and this implementation workflow will be taken into consideration while designing a Python program for this project.
 
 ### Minimax Algorithm
 
@@ -70,3 +69,58 @@ We should assume that O is also playing to win this game, but relative to us, th
 The choice is clear, O would pick any of the moves that result in a score of -10.
 
 #### Describing Minimax
+
+The key to the Minimax algorithm is a back and forth between the two players, where the player whose "turn it is" desires to pick the move with the maximum score. In turn, the scores for each of the available moves are determined by the opposing player deciding which of its available moves has the minimum score. And the scores for the opposing players moves are again determined by the turn-taking player trying to maximize its score and so on all the way down the move tree to an end state.
+
+A description for the algorithm, assuming X is the "turn taking player:
+
+* If the game is over, return the score from X's perspective.
+* Otherwise get a list of new game states for every possible move.
+* Create a scores list.
+* For each of these states add the minimax result of that state to the scores list.
+* If it's X's turn, return the maximum score from the scores list.
+* If it's O's turn, return the minimum score from the scores list. 
+
+This algorithm is recursive, it flips back and forth between the players until a final score is found.
+
+Let's walk through the algorithm's execution with the full move tree, and show why, algorithmically, the instant winning move will be picked:
+
+* It's X's turn in state 1. X generates the states 2, 3, and 4 and calls minimax on those states.
+* State 2 pushes the score of +10 to state 1's score list, because the game is in an end state.
+* State 3 and 4 are not in end states, so 3 generates states 5 and 6 and calls minimax on them, while state 4 generates states 7 and 8 and calls minimax on them.
+* State 5 pushes a score of -10 onto state 3's score list, while the same happens for state 7 which pushes a score of -10 onto state 4's score list.
+* State 6 and 8 generate the only available moves, which are end states, and so both of them add the score of +10 to the move lists of states 3 and 4.
+* Because it is O's turn in both state 3 and 4, O will seek to find the minimum score, and given the choice between -10 and +10, both states 3 and 4 will yield -10.
+* Finally the score list for states 2, 3, and 4 are populated with +10, -10 and -10 respectively, and state 1 seeking to maximize the score will chose the winning move with score +10, state 2.
+
+Let's see what is happening here by looking through the possible move tree:
+
+* Given the board state 1 where both players are playing perfectly, and O is the computer player. O choses the move in state 5 and then immediately loses when X wins in state 9.
+* But if O blocks X's win as in state 3, X will obviously block O's potential win as shown in state 7.
+* This puts two certain wins for X as shown in state 10 and 11, so no matter which move O picks in state 7, X will ultimately win.
+
+As a result of these scenarios, and the fact that we are iterating through each blank space, from left to right, top to bottom, all moves being equal, that is, resulting in a lose for O, the last move will be chosen as shown in state 5, as it is the last of the available moves in state 1. The array of moves being: [top-left, top-right, middle-left, middle-center].
+
+Another important factor in this algorithm is depth. 
+
+The key improvement to this algorithm, such that, no matter the board arrangement, the perfect player will play perfectly, is to take the "depth" or number of turns till the end of the game into account. Basically the perfect player should play perfectly, but prolong the game as much as possible.
+
+So each time we invoke minimax, depth is incremented by 1 and when the end game state is ultimately calculated, the score is adjusted by depth.
+
+Let's see how this looks in our move tree:
+
+This time the depth (Shown in black on the left) causes the score to differ for each end state, and because the level 0 part of minimax will try to maximize the available scores (because O is the turn taking player), the -6 score will be chosen as it is greater than the other states with a score of -8. 
+
+Since this is a very complex algorithm, we have a computer to execute this algorithm.
+
+#### Code Implemnetation
+
+* In order to run this code, pygame library needs to be installed. To install this, open command prompt and type "pip install pygame".
+
+* Run the complete code TicTacToe_Game_Project.ipynb.
+
+* After running the code, following window will be displayed on the screen (Empty Board): 
+
+* The game contains two buttons - vs Human and vs AI, so that we can choose our opponent. Once we click button, start playing game by clicking on the game board. Since we play first, we will be defined as Player X. 
+
+* Once the game is finished, the message will be displayed on the game screen with either the winner name (X or O) or Draw game.
