@@ -53,7 +53,7 @@ Minimax is a recursive algorithm which is used to choose the best move that lead
 
 Its goal is to minimize the maximum loss i.e. minimize the worst case scenario.
 
-#### Looking at a Brief Example
+#### Explanation with Example
 
 To apply this, let's take an example from near the end of a game, where it is my turn. I am X. My goal here, obviously, is to maximize my end game score.
 
