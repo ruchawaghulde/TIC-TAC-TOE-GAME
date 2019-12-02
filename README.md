@@ -14,11 +14,11 @@ The game can be played by two players. There are two options for players: (a) Hu
 
 ### GAME RULES:
 A player can choose between two symbols with his opponent, usual game uses “X” and “O”. 
-1.	The player that gets to play with the "X" marks will play first (we call him/her player 1) and the player that gets to play with the "O" marks will play second (we call him/her player 2).
+1.	The player that gets to play first will get the "X" mark (we call him/her player 1) and the player that gets to play second will get the "O" mark (we call him/her player 2).
 
 2.	Player 1 and 2 take turns making moves with Player 1 playing mark “X” and Player 2 playing mark “O”.
 
-3.	A player marks any of the 3x3 squares with his mark (“X” or “O”) and their aim is to create a straight line horizontally or vertically or diagonally with two intensions:<br/>
+3.	A player marks any of the 3x3 squares with his mark (“X” or “O”) and their aim is to create a straight line horizontally, vertically or diagonally with two intensions:<br/>
 a.	One of the players gets three of his/her marks in a row (vertically, horizontally, or diagonally) i.e. that player wins the game.<br/>
 b.	If no one can create a straight line with their own mark and all the positions on the board are occupied, then the game ends in a  draw/tie.
 
@@ -29,20 +29,24 @@ The implementation workflow for this project is as follows:
 
 In order to visualize the defined game rules and description, the game is shown in Figures below.
 
-First the game will start with empty board.
+First the game will start with empty board.<br/>
+
+<p align="center"><img src="Images/Empty_Board.png" width="280" height="280" /></p>
 
 Then Player 1 will make his/her move by playing mark “X” on this board. Then Player 2 will make his/her move by playing mark “O” on this board. This will keep on continuing until the board is full of marks.
 
 <p align="center"><img src="Images/Python_gameplay.jpg" width="350" height="230" /></p>
 
-Then the program will check if Player 1 with “X” wins or Player 2 with “O” wins and that scenario will be follows: (could be vertically, horizontally or diagonally). If none of the players win, the game is draw. All this decision making is done by using Minimax algorithm.
+Then the program will check if Player 1 with “X” wins or Player 2 with “O” wins and that scenario will be follows: (could be vertically, horizontally or diagonally).  
 
-<p align="center"><img src="Images/PythonProj.png" /></p>
+<p align="center"><img src="Images/X_wins.png" width="280" height="280" /></p>
+<p align="center"><img src="Images/O_wins.png" width="280" height="280" /></p>
 
 If none of the players win, the program will check for draw.
 
-<p align="center"><img src="Images/ProposalPythonProj.png" /></p>
+<p align="center"><img src="Images/Draw_Game.png" width="280" height="280" /></p>
 
+All this decision making is done by using Minimax algorithm.
 
 ### Minimax Algorithm
 
@@ -56,11 +60,15 @@ Its goal is to minimize the maximum loss i.e. minimize the worst case scenario.
 
 To apply this, let's take an example from near the end of a game, where it is my turn. I am X. My goal here, obviously, is to maximize my end game score.
 
-If the top of this image represents the state of the game I see when it is my turn, then I have some choices to make, there are three places I can play, one of which clearly results in me wining and earning the 10 points. If I don't make that move, O could very easily win. And I don't want O to win, so my goal here, as the first player, should be to pick the maximum scoring move.
+<p align="center"><img src="Images/Minimax_1.png" width="280" height="280" /></p>
+
+If the top of this image represents the state of the game when it is my turn, then I have some choices to make, there are three places I can play, one of which clearly results in me wining and earning the 10 points. If I don't make that move, O could very easily win. And I don't want O to win, so my goal here, as the first player, should be to pick the maximum scoring move.
 
 #### But What About O?
 
 We should assume that O is also playing to win this game, but relative to us, the first player, O wants obviously wants to chose the move that results in the worst score for us, it wants to pick a move that would minimize our ultimate score. Let's look at things from O's perspective, starting with the two other game states from above in which we don't immediately win.
+
+<p align="center"><img src="Images/Minimax_2.png" width="280" height="280" /></p>
 
 The choice is clear, O would pick any of the moves that result in a score of -10.
 
@@ -68,7 +76,7 @@ The choice is clear, O would pick any of the moves that result in a score of -10
 
 The key to the Minimax algorithm is a back and forth between the two players, where the player whose "turn it is" desires to pick the move with the maximum score. In turn, the scores for each of the available moves are determined by the opposing player deciding which of its available moves has the minimum score. And the scores for the opposing players moves are again determined by the turn-taking player trying to maximize its score and so on all the way down the move tree to an end state.
 
-A description for the algorithm, assuming X is the "turn taking player:
+A description for the algorithm, assuming X is the turn taking player:
 
 * If the game is over, return the score from X's perspective.
 * Otherwise get a list of new game states for every possible move.
@@ -77,9 +85,9 @@ A description for the algorithm, assuming X is the "turn taking player:
 * If it's X's turn, return the maximum score from the scores list.
 * If it's O's turn, return the minimum score from the scores list. 
 
-This algorithm is recursive, it flips back and forth between the players until a final score is found.
+Let's walk through the algorithm's execution with the full move tree, and algorithmically, how the instant winning move will be picked:
 
-Let's walk through the algorithm's execution with the full move tree, and show why, algorithmically, the instant winning move will be picked:
+<p align="center"><img src="Images/Minimax_3.png" width="280" height="280" /></p>
 
 * It's X's turn in state 1. X generates the states 2, 3, and 4 and calls minimax on those states.
 * State 2 pushes the score of +10 to state 1's score list, because the game is in an end state.
@@ -91,20 +99,18 @@ Let's walk through the algorithm's execution with the full move tree, and show w
 
 Let's see what is happening here by looking through the possible move tree:
 
+<p align="center"><img src="Images/Minimax_4.png" width="280" height="280" /></p>
+
 * Given the board state 1 where both players are playing perfectly, and O is the computer player. O choses the move in state 5 and then immediately loses when X wins in state 9.
 * But if O blocks X's win as in state 3, X will obviously block O's potential win as shown in state 7.
 * This puts two certain wins for X as shown in state 10 and 11, so no matter which move O picks in state 7, X will ultimately win.
-
-As a result of these scenarios, and the fact that we are iterating through each blank space, from left to right, top to bottom, all moves being equal, that is, resulting in a lose for O, the last move will be chosen as shown in state 5, as it is the last of the available moves in state 1. The array of moves being: [top-left, top-right, middle-left, middle-center].
 
 Another important factor in this algorithm is depth. 
 
 The key improvement to this algorithm, such that, no matter the board arrangement, the perfect player will play perfectly, is to take the "depth" or number of turns till the end of the game into account. Basically the perfect player should play perfectly, but prolong the game as much as possible.
 
 So each time we invoke minimax, depth is incremented by 1 and when the end game state is ultimately calculated, the score is adjusted by depth.
-
-This time the depth (Shown in black on the left) causes the score to differ for each end state, and because the level 0 part of minimax will try to maximize the available scores (because O is the turn taking player), the -6 score will be chosen as it is greater than the other states with a score of -8. 
-
+ 
 Since this is a very complex algorithm, we have a computer to execute this algorithm.
 
 #### Code Implemnetation
@@ -114,6 +120,8 @@ Since this is a very complex algorithm, we have a computer to execute this algor
 * Run the complete code TicTacToe_Game_Project.ipynb.
 
 * After running the code, following window will be displayed on the screen (Empty Board): 
+
+<p align="center"><img src="Images/Empty_Board.png" width="280" height="280" /></p>
 
 * The game contains two buttons - vs Human and vs AI, so that we can choose our opponent. Once we click button, start playing game by clicking on the game board. Since we play first, we will be defined as Player X. 
 
