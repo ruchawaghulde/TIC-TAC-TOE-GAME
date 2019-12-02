@@ -1,0 +1,614 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "###  **<h1><center>Tic Tac Toe Game</center></h1>**"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Libraries\n",
+    "\n",
+    "Pygame is a Free and Open Source python programming language library for making multimedia applications like games. In this project, pygame is used for GUI implementation of Tic Tac Toe game.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "pygame 1.9.6\n",
+      "Hello from the pygame community. https://www.pygame.org/contribute.html\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Python library used for GUI\n",
+    "\n",
+    "import pygame\n",
+    "from pygame.locals import *"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Game Board Features\n",
+    "\n",
+    "This is to create the constants for the features of the game board. It includes features like width, height, color, font size, etc."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Create the features of the game board\n",
+    "\n",
+    "Board_width = 3  # number of columns in the board\n",
+    "Board_height = 3 # number of rows in the board\n",
+    "Tile_size = 100\n",
+    "Window_width = 480\n",
+    "Window_height = 480\n",
+    "FPS = 30  # Frames per second\n",
+    "Blank = None\n",
+    "\n",
+    "# Color of the game board\n",
+    "\n",
+    "#                  R    G    B\n",
+    "Black =          (  0,   0,   0)\n",
+    "White =          (255, 255, 255)\n",
+    "Green =          (  0,  204,  0)\n",
+    "Dark_turquoise = (  3,  54,  73)\n",
+    "Magenta =        (  255, 0, 255)\n",
+    "\n",
+    "Background_color = Dark_turquoise\n",
+    "Tile_color = Magenta\n",
+    "Text_color = White\n",
+    "Border_color = Green\n",
+    "Font_size = 20\n",
+    "\n",
+    "Button_color = White\n",
+    "Button_text_color = Black\n",
+    "Message_color = White"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "Blank = 10\n",
+    "Player_O = 11\n",
+    "Player_X = 21\n",
+    "\n",
+    "\n",
+    "Player_O_win = Player_O * 3\n",
+    "Player_X_win = Player_X * 3\n",
+    "\n",
+    "Continue_Game  = 10\n",
+    "Draw_Game      = 20\n",
+    "Quit_Game      = 30\n",
+    "\n",
+    "X_margin = int((Window_width - (Tile_size * Board_width + (Board_width - 1))) / 2)\n",
+    "Y_margin = int((Window_height - (Tile_size * Board_height + (Board_height - 1))) / 2)\n",
+    "\n",
+    "choice = 0"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Winning Cases\n",
+    "\n",
+    "This function is used to check possible winning cases. A player can win the Tic Tac Toe game if he/she gets all their marks in either horizontal, vertical or diagonal of the game board. Otherwise, the game will be considered as a draw game."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Check possiblities of winning in the game\n",
+    "\n",
+    "def Check_Winner(board):\n",
+    "    def Check_Draw():\n",
+    "        return sum(board)%10 == 9\n",
+    "\n",
+    "    def check_horizontal(player):   # Horizontal Win\n",
+    "        for i in [0, 3, 6]:\n",
+    "            if sum(board[i:i+3]) == 3 * player:\n",
+    "                return player\n",
+    "\n",
+    "    def check_vertical(player):   # Vertical Win\n",
+    "        for i in range(3):\n",
+    "            if sum(board[i::3]) == 3 * player:\n",
+    "                return player\n",
+    "\n",
+    "    def check_diagonals(player):   # Main Diagonal Win\n",
+    "        if (sum(board[0::4]) == 3 * player) or (sum(board[2:7:2]) == 3 * player):\n",
+    "            return player\n",
+    "\n",
+    "    for player in [Player_X, Player_O]:\n",
+    "        if any([check_horizontal(player), check_vertical(player), check_diagonals(player)]):\n",
+    "            return player\n",
+    "\n",
+    "    return Draw_Game if Check_Draw() else Continue_Game"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def unit_score(winner, depth):\n",
+    "    if winner == Draw_Game:\n",
+    "        return 0\n",
+    "    else:\n",
+    "        return 10 - depth if winner == Player_X else depth - 10"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Get available moves on the game board\n",
+    "\n",
+    "def get_available_move(board):\n",
+    "    return [i for i in range(9) if board[i] == Blank]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Minimax Algorithm\n",
+    "\n",
+    "Minimax is a artificial intelligence algorithm applied in two player Tic Tac Toe game. It is used for decision making. \n",
+    "\n",
+    "The algorithm search, recursively for the best move that leads the Max player to win or not lose (draw). It consider the current state of the game and the available moves at that state, then for each valid move it plays (alternating min and max) until it finds a terminal state (win, draw or lose)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Minimax Algorithm used for this game\n",
+    "\n",
+    "def minimax(board, depth):\n",
+    "    global choice\n",
+    "    result = Check_Winner(board)\n",
+    "    if result != Continue_Game:\n",
+    "        return unit_score(result, depth)\n",
+    "\n",
+    "    depth += 1  # index of the node in the game tree\n",
+    "    scores = []   # an array of scores\n",
+    "    steps = []   # an array of moves(steps)\n",
+    "\n",
+    "    for step in get_available_move(board):\n",
+    "        score = minimax(update_state(board, step, depth), depth)\n",
+    "        scores.append(score)\n",
+    "        steps.append(step)\n",
+    "\n",
+    "    if depth % 2 == 1:\n",
+    "        max_value_index = scores.index(max(scores))\n",
+    "        choice = steps[max_value_index]\n",
+    "        return max(scores)\n",
+    "    else:\n",
+    "        min_value_index = scores.index(min(scores))\n",
+    "        choice = steps[min_value_index]\n",
+    "        return min(scores)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "We should update the variables of the game state and get the new updated state. After updating game states, we need to update the actual board data structure "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def update_state(board, step, depth):   \n",
+    "    board = list(board)\n",
+    "    board[step] = Player_X if depth % 2 else Player_O\n",
+    "    return board\n",
+    "\n",
+    "def update_board(board, step, player):\n",
+    "    board[step] = player"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Assigining X and O to both the players by checking which player is playing\n",
+    "\n",
+    "def change_to_player(player):\n",
+    "    if player == Player_O:\n",
+    "        return 'O'\n",
+    "    elif player == Player_X:\n",
+    "        return 'X'\n",
+    "    elif player == Blank:\n",
+    "        return '-'"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Draw the game board\n",
+    "\n",
+    "The function Draw_Board handles drawing the entire board and all of its tiles to the displaySurf display Surface object. The fill() method completely paints over anything that used to be drawn on the display Surface object before so that we start from scratch.\n",
+    "Then the code handles drawing the message at the top of the window. We use this to display the text at the top of the window.\n",
+    "\n",
+    "Next, nested for loops are used to draw each tile to the display Surface object by calling the drawTile() function.\n",
+    "\n",
+    "The code then draw a border around the tiles. The top left corner of the boarder will be 5 pixels to the left and 5 pixels above the top left corner of the tile at board coordinates (0, 0). The width and height of the border are calculated from the number of tiles wide and high the board is (stored in the Board_width and Board_height constants) multiplied by the size of the tiles (stored in the Tile_size constant).\n",
+    "\n",
+    "The rectangle we draw will have a thickness of 4 pixels, so we will move the boarder 5 pixels to the left and above where the top and left variables point so the thickness of the line won’t overlap the tiles. We will also add 11 to the width and length (5 of those 11 pixels are to compensate for moving the rectangle to the left and up).\n",
+    "\n",
+    "Finally, we draw the buttons off to the slide of the screen. The text and position of these buttons never changes, which is why they were stored in constant variables at the beginning of the main() function.\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Drawing the game board using defined features\n",
+    "\n",
+    "def Draw_Board(board, message):\n",
+    "    displaySurf.fill(Background_color)\n",
+    "    if message:\n",
+    "        textSurf, textRect = makeText(message, Message_color, Background_color, 5, 5)\n",
+    "        displaySurf.blit(textSurf, textRect)\n",
+    "\n",
+    "    for tile_x in range(3):\n",
+    "        for tile_y in range(3):\n",
+    "            if board[tile_x*3+tile_y] != Blank:\n",
+    "                drawTile(tile_x, tile_y, board[tile_x*3+tile_y])\n",
+    "\n",
+    "    left, top = get_Left_Top_Of_Tile(0, 0)\n",
+    "    width = Board_width * Tile_size\n",
+    "    height = Board_height * Tile_size\n",
+    "    pygame.draw.rect(displaySurf, Border_color, (left - 5, top - 5, width + 11, height + 11), 4)\n",
+    "\n",
+    "    displaySurf.blit(New_surf, New_rect)\n",
+    "    displaySurf.blit(New_surf2, New_rect2)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Convet Board Coordinates to Pixel Coordinates\n",
+    "\n",
+    "For the board XY coordinates that are passed in, the function get_Left_Top_Of_Tile() calculates and returns the pixel XY coordinates of the pixel at the top left of that board space."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Converting board coordinates to pixel coordinates\n",
+    "\n",
+    "def get_Left_Top_Of_Tile(tile_X, tile_Y):\n",
+    "    left = X_margin + (tile_X * Tile_size) + (tile_X - 1)\n",
+    "    top = Y_margin + (tile_Y * Tile_size) + (tile_Y - 1)\n",
+    "    return (left, top)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Make Text Appear on the Screen\n",
+    "\n",
+    "The makeText() function handles creating the Surface and Rect objects for positioning text on the screen.\n",
+    "Instead of doing all these calls each time we want to make text on the screen, we can just call makeText() instead. \n",
+    "This saves us on the amount of typing we have to do for our program. (Though drawTile() makes the calls to render() and get_rect() itself because it positions the text Surface object by the center point rather than the topleft point and uses a transparent background color.) \n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Making Text Appear on the Screen\n",
+    "\n",
+    "def makeText(text, color, bgcolor, top, left):\n",
+    "    textSurf = Basic_font.render(text, True, color, bgcolor)\n",
+    "    textRect = textSurf.get_rect()\n",
+    "    textRect.topleft = (top, left)\n",
+    "    return (textSurf, textRect)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Draw a Tile\n",
+    "\n",
+    "The drawTile() function will draw a single numbered tile on the board. \n",
+    "\n",
+    "The tile_x and tile_y parameters are the board coordinates of the tile.\n",
+    "The adj_x and adj_y keyword parameters are for making minor adjustments to the position of the tile.\n",
+    "\n",
+    "The Pygame drawing functions only use pixel coordinates, so first it converts the board coordinates in tile_x and tile_y to pixel coordinates, which we will be stored in variables left and top (since get_Left_Top_Of_Tile() returns the top left corner’s coordinates). \n",
+    "\n",
+    "We draw the background square of the tile with a call to pygame.draw.rect() while adding the adj_x and adj_y values to left and top in case the code needs to adjust the position of the tile.\n",
+    "\n",
+    "Then the Surface object is created that has the number text drawn on it. A Rect object for the Surface object is positioned, and then used to blit the Surface object to the display Surface.\n",
+    "\n",
+    "The drawTile() function does not call pygame.display.update() function, since the caller of drawTile() probably will want to draw more tiles for the rest of the board before making them appear on the screen.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Draw a tile at board coordinates.\n",
+    "\n",
+    "def drawTile(tile_x, tile_y, symbol, adj_x=0, adj_y=0):\n",
+    "    left, top = get_Left_Top_Of_Tile(tile_x, tile_y)\n",
+    "    pygame.draw.rect(displaySurf, Tile_color, (left + adj_x, top + adj_y, Tile_size, Tile_size))\n",
+    "    textSurf = Basic_font.render(symbol_to_str(symbol), True, Text_color)\n",
+    "    textRect = textSurf.get_rect()\n",
+    "    textRect.center = left + int(Tile_size / 2) + adj_x, top + int(Tile_size / 2) + adj_y\n",
+    "    displaySurf.blit(textSurf, textRect)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def symbol_to_str(symbol):\n",
+    "    if symbol == Player_O:\n",
+    "        return 'O'\n",
+    "    elif symbol == Player_X:\n",
+    "        return 'X'"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Convert Pixel coordinates to Board coordinates\n",
+    "\n",
+    "If the pixel coordinates that were passed in are within that space on the board, it returns those board coordinates. \n",
+    "Since all of the tiles have a width and height that is set in the Tile_size constant, we can create a Rect object that represents the space on the board by getting the pixel coordinates of the top left corner of the board space, and then use the collidepoint() Rect method to see if the pixel coordinates are inside that Rect object’s area.\n",
+    "\n",
+    "If the pixel coordinates that were passed in were not over any board space, then the value None is returned."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Converting from Pixel Coordinates to Board Coordinates\n",
+    "\n",
+    "def get_spot_clicked(x, y):\n",
+    "    for tile_X in range(3):\n",
+    "        for tile_Y in range(3):\n",
+    "            left, top = get_Left_Top_Of_Tile(tile_X, tile_Y)\n",
+    "            tileRect = pygame.Rect(left, top, Tile_size, Tile_size)\n",
+    "            if tileRect.collidepoint(x, y):\n",
+    "                return (tile_X, tile_Y)\n",
+    "    return None"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def board_to_step(spot_x, spot_y):\n",
+    "    return spot_x * 3 + spot_y"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def check_valid_move(coords, board):\n",
+    "    step = board_to_step(*coords)\n",
+    "    return board[step] == Blank"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### main() function \n",
+    "\n",
+    "main() function will handle creating the window, clock object, and font object."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Diplaying the final game\n",
+    "\n",
+    "def main():\n",
+    "    global FPS_clock, displaySurf, Basic_font, New_surf, New_rect, New_surf2, New_rect2\n",
+    "    two_player = False #by default false\n",
+    "    pygame.init()\n",
+    "    FPS_clock = pygame.time.Clock()\n",
+    "    displaySurf = pygame.display.set_mode((Window_width, Window_height))\n",
+    "    pygame.display.set_caption('Tic Tac Toe')\n",
+    "    Basic_font = pygame.font.Font('freesansbold.ttf', Font_size)\n",
+    "    New_surf, New_rect = makeText('vs AI', Text_color, Tile_color, Window_width - 120, Window_height - 60)\n",
+    "    New_surf2, New_rect2 = makeText('vs Human', Text_color, Tile_color, Window_width - 240, Window_height - 60)\n",
+    "    board = [Blank] * 9\n",
+    "    game_over = False\n",
+    "    x_turn = True\n",
+    "    msg = \"Welcome to this game\"   # Contains the message to show in the upper left corner.\n",
+    "    Draw_Board(board, msg)\n",
+    "    pygame.display.update()   # pygame.display.update() is called to draw the display Surface object on the actual computer screen\n",
+    "\n",
+    "    while True:\n",
+    "        coords = None\n",
+    "        for event in pygame.event.get():   # event handling loop\n",
+    "            if event.type == MOUSEBUTTONUP:   # If the type of event was a MOUSEBUTTONUP event (that is, the player had released a mouse button somewhere over the window), then we pass the mouse coordinates to our getSpotClicked() function which will return the board coordinates of the spot on the board the mouse release happened. The event.pos[0] is the X coordinate and event.pos[1] is the Y coordinate.\n",
+    "                coords = get_spot_clicked(event.pos[0], event.pos[1])\n",
+    "                if not coords and New_rect.collidepoint(event.pos):\n",
+    "                    board = [Blank] * 9\n",
+    "                    game_over = False\n",
+    "                    msg = \"Welcome to this game\"\n",
+    "                    Draw_Board(board, msg)\n",
+    "                    pygame.display.update()\n",
+    "                    two_player = False\n",
+    "                if not coords and New_rect2.collidepoint(event.pos):\n",
+    "                    board = [Blank] * 9\n",
+    "                    game_over = False\n",
+    "                    msg = \"Welcome to this game\"\n",
+    "                    Draw_Board(board, msg)\n",
+    "                    pygame.display.update()\n",
+    "                    two_player = True\n",
+    "        if coords and check_valid_move(coords, board) and not game_over:\n",
+    "            if two_player:\n",
+    "                next_step = board_to_step(*coords)\n",
+    "                if x_turn:\n",
+    "                    update_board(board, next_step, Player_X)\n",
+    "                    x_turn = False\n",
+    "                else:\n",
+    "                    update_board(board, next_step, Player_O)\n",
+    "                    x_turn = True\n",
+    "                Draw_Board(board, msg)\n",
+    "                pygame.display.update()\n",
+    "\n",
+    "            if not two_player:\n",
+    "                next_step = board_to_step(*coords)\n",
+    "                update_board(board, next_step, Player_X)\n",
+    "                Draw_Board(board, msg)\n",
+    "                pygame.display.update()\n",
+    "                minimax(board, 0)\n",
+    "                update_board(board, choice, Player_O)\n",
+    "\n",
+    "            result = Check_Winner(board)\n",
+    "            game_over = (result != Continue_Game)\n",
+    "\n",
+    "            if result == Player_X:\n",
+    "                msg = \"The winner of this game is X\"\n",
+    "            elif result == Player_O:\n",
+    "                msg = \"The winner of this game is O\"\n",
+    "            elif result == Draw_Game:\n",
+    "                msg = \"Draw Game\"\n",
+    "\n",
+    "            Draw_Board(board, msg)\n",
+    "            pygame.display.update()\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Start the game"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Start playing the game by calling main() function\n",
+    "\n",
+    "if __name__ == '__main__':\n",
+    "    main()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {},
+   "outputs": [
+    {
+     "ename": "KeyboardInterrupt",
+     "evalue": "",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[1;31m---------------------------------------------------------------------------\u001b[0m",
+      "\u001b[1;31mKeyboardInterrupt\u001b[0m                         Traceback (most recent call last)",
+      "\u001b[1;32m<ipython-input-19-c7bc734e5e35>\u001b[0m in \u001b[0;36m<module>\u001b[1;34m\u001b[0m\n\u001b[0;32m      1\u001b[0m \u001b[1;32mif\u001b[0m \u001b[0m__name__\u001b[0m \u001b[1;33m==\u001b[0m \u001b[1;34m'__main__'\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m----> 2\u001b[1;33m     \u001b[0mmain\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m",
+      "\u001b[1;32m<ipython-input-18-0b6133da39a5>\u001b[0m in \u001b[0;36mmain\u001b[1;34m()\u001b[0m\n\u001b[0;32m     20\u001b[0m     \u001b[1;32mwhile\u001b[0m \u001b[1;32mTrue\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m     21\u001b[0m         \u001b[0mcoords\u001b[0m \u001b[1;33m=\u001b[0m \u001b[1;32mNone\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m---> 22\u001b[1;33m         \u001b[1;32mfor\u001b[0m \u001b[0mevent\u001b[0m \u001b[1;32min\u001b[0m \u001b[0mpygame\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mevent\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mget\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m:\u001b[0m   \u001b[1;31m# event handling loop\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m     23\u001b[0m             \u001b[1;32mif\u001b[0m \u001b[0mevent\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mtype\u001b[0m \u001b[1;33m==\u001b[0m \u001b[0mMOUSEBUTTONUP\u001b[0m\u001b[1;33m:\u001b[0m   \u001b[1;31m# If the type of event was a MOUSEBUTTONUP event (that is, the player had released a mouse button somewhere over the window), then we pass the mouse coordinates to our getSpotClicked() function which will return the board coordinates of the spot on the board the mouse release happened. The event.pos[0] is the X coordinate and event.pos[1] is the Y coordinate.\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m     24\u001b[0m                 \u001b[0mcoords\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0mget_spot_clicked\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mevent\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mpos\u001b[0m\u001b[1;33m[\u001b[0m\u001b[1;36m0\u001b[0m\u001b[1;33m]\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mevent\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mpos\u001b[0m\u001b[1;33m[\u001b[0m\u001b[1;36m1\u001b[0m\u001b[1;33m]\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n",
+      "\u001b[1;31mKeyboardInterrupt\u001b[0m: "
+     ]
+    }
+   ],
+   "source": [
+    "if __name__ == '__main__':\n",
+    "    main()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
