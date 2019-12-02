@@ -25,7 +25,7 @@ b.	If no one can create a straight line with their own mark and all the position
 ### IMPLEMENTATION PLAN:
 The implementation workflow for this project is as follows:
 
-<p align="center"><img src="Images/Python_flowchart.png" /></p>
+<p align="center"><img src="Images/Python_flowchart.png" width="430" height="400" /></p>
 
 In order to visualize the defined game rules and description, the game is shown in Figures below.
 
