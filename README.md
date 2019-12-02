@@ -110,7 +110,7 @@ So each time we invoke minimax, depth is incremented by 1 and when the end game 
  
 Since this is a very complex algorithm, we have a computer to execute this algorithm.
 
-#### Code Implemnetation
+#### Code Implementation
 
 * In order to run this code, pygame library needs to be installed. To install this, open command prompt and type "pip install pygame".
 
