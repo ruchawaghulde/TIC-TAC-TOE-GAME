@@ -35,12 +35,10 @@ First the game will start with empty board.<br/>
 
 Then Player 1 will make his/her move by playing mark “X” on this board. Then Player 2 will make his/her move by playing mark “O” on this board. This will keep on continuing until the board is full of marks.
 
-<p align="center"><img src="Images/Python_gameplay.jpg" width="350" height="230" /></p>
-
 Then the program will check if Player 1 with “X” wins or Player 2 with “O” wins and that scenario will be follows: (could be vertically, horizontally or diagonally).  
 
-<p align="center"><img src="Images/X_wins.png" width="280" height="280" /></p>
-<p align="center"><img src="Images/O_wins.png" width="280" height="280" /></p>
+<p align="center"><img src="Images/X_wins.png" width="230" height="230" /></p>
+<p align="center"><img src="Images/O_wins.png" width="230" height="230" /></p>
 
 If none of the players win, the program will check for draw.
 
@@ -60,7 +58,7 @@ Its goal is to minimize the maximum loss i.e. minimize the worst case scenario.
 
 To apply this, let's take an example from near the end of a game, where it is my turn. I am X. My goal here, obviously, is to maximize my end game score.
 
-<p align="center"><img src="Images/Minimax_1.png" width="280" height="280" /></p>
+<p align="center"><img src="Images/Minimax_1.png" width="320" height="290" /></p>
 
 If the top of this image represents the state of the game when it is my turn, then I have some choices to make, there are three places I can play, one of which clearly results in me wining and earning the 10 points. If I don't make that move, O could very easily win. And I don't want O to win, so my goal here, as the first player, should be to pick the maximum scoring move.
 
@@ -68,7 +66,7 @@ If the top of this image represents the state of the game when it is my turn, th
 
 We should assume that O is also playing to win this game, but relative to us, the first player, O wants obviously wants to chose the move that results in the worst score for us, it wants to pick a move that would minimize our ultimate score. Let's look at things from O's perspective, starting with the two other game states from above in which we don't immediately win.
 
-<p align="center"><img src="Images/Minimax_2.png" width="280" height="280" /></p>
+<p align="center"><img src="Images/Minimax_2.png" width="320" height="290" /></p>
 
 The choice is clear, O would pick any of the moves that result in a score of -10.
 
@@ -87,7 +85,7 @@ A description for the algorithm, assuming X is the turn taking player:
 
 Let's walk through the algorithm's execution with the full move tree, and algorithmically, how the instant winning move will be picked:
 
-<p align="center"><img src="Images/Minimax_3.png" width="280" height="280" /></p>
+<p align="center"><img src="Images/Minimax_3.png" width="320" height="290" /></p>
 
 * It's X's turn in state 1. X generates the states 2, 3, and 4 and calls minimax on those states.
 * State 2 pushes the score of +10 to state 1's score list, because the game is in an end state.
@@ -99,7 +97,7 @@ Let's walk through the algorithm's execution with the full move tree, and algori
 
 Let's see what is happening here by looking through the possible move tree:
 
-<p align="center"><img src="Images/Minimax_4.png" width="280" height="280" /></p>
+<p align="center"><img src="Images/Minimax_4.png" width="320" height="290" /></p>
 
 * Given the board state 1 where both players are playing perfectly, and O is the computer player. O choses the move in state 5 and then immediately loses when X wins in state 9.
 * But if O blocks X's win as in state 3, X will obviously block O's potential win as shown in state 7.
