@@ -121,7 +121,7 @@ Since this is a very complex algorithm, we have a computer to execute this algor
 
 * After running the code, following window will be displayed on the screen (Empty Board): 
 
-<p align="center"><img src="Images/Empty_Board.png" width="280" height="280" /></p>
+<p align="center"><img src="Images/EmptyBoard_highlightedButtons.png" width="280" height="280" /></p>
 
 * The game contains two buttons - vs Human and vs AI, so that we can choose our opponent. Once we click button, start playing game by clicking on the game board. Since we play first, we will be defined as Player X. 
 
