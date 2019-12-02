@@ -114,7 +114,7 @@ Since this is a very complex algorithm, we have a computer to execute this algor
 
 * In order to run this code, pygame library needs to be installed. To install this, open command prompt and type "pip install pygame".
 
-* Run the complete code TicTacToe_Game_Project.ipynb.
+* Run the complete code TicTacToeGame.ipynb.
 
 * After running the code, following window will be displayed on the screen (Empty Board): 
 
